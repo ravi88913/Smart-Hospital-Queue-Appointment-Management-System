@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Hospital DSA Visualizer & Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <span class="logo-icon">🏥</span>
+                <h2>SmartHospital</h2>
+                <span class="sub-logo">DSA Edition</span>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-tab="dashboard">
+                    <span class="btn-icon">📊</span> Dashboard
+                </button>
+                <button class="nav-btn" data-tab="patients">
+                    <span class="btn-icon">👥</span> Patients Registry
+                </button>
+                <button class="nav-btn" data-tab="doctors">
+                    <span class="btn-icon">🩺</span> Doctors Registry
+                </button>
+                <button class="nav-btn" data-tab="appointments">
+                    <span class="btn-icon">📅</span> Appointments
+                </button>
+                <button class="nav-btn" data-tab="queues">
+                    <span class="btn-icon">⏳</span> Queue & Treat
+                </button>
+                <button class="nav-btn" data-tab="visualizer">
+                    <span class="btn-icon">👁️</span> DSA Visualizer
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <p>Designed for DSA Presentation</p>
+                <div class="dsa-badge">Pure JS Structures</div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            <!-- Header Area -->
+            <header class="app-header">
+                <h1 id="tab-title">Hospital Dashboard</h1>
+                <div class="system-status">
+                    <span class="status-indicator"></span> Live DSA Simulator
+                </div>
+            </header>
+
+            <!-- Active Tab Content Area -->
+            <div class="tab-panel active" id="tab-dashboard">
+                <!-- Stat Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card blue">
+                        <div class="stat-info">
+                            <h3>Total Patients</h3>
+                            <p class="stat-num" id="stat-patients">0</p>
+                        </div>
+                        <div class="stat-icon">👥</div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-info">
+                            <h3>Active Doctors</h3>
+                            <p class="stat-num" id="stat-doctors">0</p>
+                        </div>
+                        <div class="stat-icon">🩺</div>
+                    </div>
+                    <div class="stat-card red">
+                        <div class="stat-info">
+                            <h3>Emergency Wait</h3>
+                            <p class="stat-num" id="stat-emergency-queue">0</p>
+                        </div>
+                        <div class="stat-icon">🚨</div>
+                    </div>
+                    <div class="stat-card amber">
+                        <div class="stat-info">
+                            <h3>Normal Queue</h3>
+                            <p class="stat-num" id="stat-normal-queue">0</p>
+                        </div>
+                        <div class="stat-icon">🚶</div>
+                    </div>
+                    <div class="stat-card purple">
+                        <div class="stat-info">
+                            <h3>Appointments</h3>
+                            <p class="stat-num" id="stat-appointments">0</p>
+                        </div>
+                        <div class="stat-icon">📅</div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Split Section -->
+                <div class="dashboard-split">
+                    <div class="split-card interactive-treatment">
+                        <h2>⚡ Quick Treatment Panel</h2>
+                        <p class="section-desc">Treat the next patient waiting in the queue.</p>
+                        <div class="treatment-box" id="treatment-active-box">
+                            <p class="empty-msg" id="treatment-empty-msg">No patients currently waiting in queues.</p>
+                            <div class="active-patient-card hidden" id="active-treatment-patient">
+                                <div class="badge" id="active-patient-badge">Emergency</div>
+                                <h3 id="active-patient-name">Patient Name</h3>
+                                <p id="active-patient-info">ID: 1 | Age: 25 | Gender: Male</p>
+                                
+                                <form id="treatment-form" class="compact-form">
+                                    <div class="form-group">
+                                        <label for="treatment-doctor">Select Treating Doctor</label>
+                                        <select id="treatment-doctor" required>
+                                            <option value="">-- Choose Doctor --</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="treatment-diagnosis">Diagnosis</label>
+                                        <input type="text" id="treatment-diagnosis" placeholder="e.g., Acute Migraine" required>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="treatment-plan">Treatment Plan</label>
+                                            <input type="text" id="treatment-plan" placeholder="e.g., Rest & Hydration" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="treatment-prescription">Prescription</label>
+                                            <input type="text" id="treatment-prescription" placeholder="e.g., Ibuprofen 400mg" required>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="submit-btn primary">Complete Treatment & Save Visit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="split-card logs-panel">
+                        <h2>📋 Recent Hospital Activity</h2>
+                        <div class="activity-log" id="activity-log">
+                            <div class="log-entry system">System initialized with empty data structures.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Patients Registry -->
+            <div class="tab-panel" id="tab-patients">
+                <div class="panel-layout-grid">
+                    <div class="form-card">
+                        <h2>📝 Register Patient</h2>
+                        <form id="patient-registration-form">
+                            <div class="form-group">
+                                <label for="pat-name">Full Name</label>
+                                <input type="text" id="pat-name" placeholder="Enter patient's name" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="pat-age">Age</label>
+                                    <input type="number" id="pat-age" min="0" max="120" placeholder="0-120" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pat-gender">Gender</label>
+                                    <select id="pat-gender" required>
+                                        <option value="">Select</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="pat-phone">Phone Number</label>
+                                <input type="tel" id="pat-phone" placeholder="7-15 digits" required>
+                            </div>
+                            <button type="submit" class="submit-btn primary">Register Patient (HashMap Add)</button>
+                        </form>
+                    </div>
+
+                    <div class="list-card">
+                        <div class="card-header-actions">
+                            <h2>👥 Patient Records</h2>
+                            <div class="search-box">
+                                <input type="text" id="patient-search-input" placeholder="Search by Patient ID...">
+                                <button class="action-btn" id="patient-search-btn">🔍 Search</button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Age/Gender</th>
+                                        <th>Phone</th>
+                                        <th>Reg. Date</th>
+                                        <th>Visits</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="patients-table-body">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Doctors Registry -->
+            <div class="tab-panel" id="tab-doctors">
+                <div class="panel-layout-grid">
+                    <div class="form-card">
+                        <h2>📝 Add Doctor</h2>
+                        <form id="doctor-form">
+                            <div class="form-group">
+                                <label for="doc-name">Doctor's Name</label>
+                                <input type="text" id="doc-name" placeholder="Dr. Enter Name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="doc-specialization">Specialization</label>
+                                <select id="doc-specialization" required>
+                                    <option value="">Select Specialization</option>
+                                    <option value="Cardiology">Cardiology</option>
+                                    <option value="Neurology">Neurology</option>
+                                    <option value="Orthopedics">Orthopedics</option>
+                                    <option value="General Medicine">General Medicine</option>
+                                    <option value="Dermatology">Dermatology</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="submit-btn success">Add Doctor (ArrayList Add)</button>
+                        </form>
+                    </div>
+
+                    <div class="list-card">
+                        <h2>🩺 Registered Specialist Doctors</h2>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Doctor Name</th>
+                                        <th>Specialization</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="doctors-table-body">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Appointments -->
+            <div class="tab-panel" id="tab-appointments">
+                <div class="appointment-grid">
+                    <div class="form-card">
+                        <h2>📅 Book Appointment</h2>
+                        <form id="appointment-form">
+                            <div class="form-group">
+                                <label for="app-patient-id">Patient ID</label>
+                                <input type="number" id="app-patient-id" placeholder="e.g. 1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="app-doctor-id">Doctor ID</label>
+                                <input type="number" id="app-doctor-id" placeholder="e.g. 1" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="app-date">Date</label>
+                                    <input type="date" id="app-date" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="app-time">Time</label>
+                                    <input type="time" id="app-time" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="submit-btn purple-btn">Schedule Appointment</button>
+                        </form>
+
+                        <div class="undo-cancellation-card">
+                            <h3>↩️ Undo Last Cancellation</h3>
+                            <p>Restore the most recently cancelled appointment using the LIFO Stack.</p>
+                            <button class="action-btn warning-btn w-full" id="undo-cancel-btn">Undo Last Cancellation (Stack Pop)</button>
+                        </div>
+                    </div>
+
+                    <div class="list-card flex-2">
+                        <div class="card-header-actions">
+                            <h2>📅 Appointment Schedule (ArrayList)</h2>
+                            <div class="filter-actions">
+                                <input type="number" id="app-filter-patient" placeholder="Filter by Patient ID...">
+                                <input type="number" id="app-filter-doctor" placeholder="Filter by Doctor ID...">
+                                <button class="action-btn btn-small" id="clear-app-filters">Reset</button>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>App. ID</th>
+                                        <th>Patient</th>
+                                        <th>Doctor</th>
+                                        <th>Date & Time</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appointments-table-body">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Queues -->
+            <div class="tab-panel" id="tab-queues">
+                <div class="queues-container-grid">
+                    <!-- Queue Ingestion Forms -->
+                    <div class="queue-forms-wrapper">
+                        <div class="form-card">
+                            <h2>🚨 Enqueue Emergency Patient</h2>
+                            <form id="emergency-queue-form">
+                                <div class="form-group">
+                                    <label for="em-patient-id">Patient ID</label>
+                                    <input type="number" id="em-patient-id" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="em-severity">Severity Level (Min is Highest Priority)</label>
+                                    <select id="em-severity" required>
+                                        <option value="">Choose Severity</option>
+                                        <option value="1">1 - Critical (Red)</option>
+                                        <option value="2">2 - Serious (Orange)</option>
+                                        <option value="3">3 - Moderate (Yellow)</option>
+                                        <option value="4">4 - Low (Green)</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="submit-btn red-btn">Add to Emergency Queue (PriorityQueue Enqueue)</button>
+                            </form>
+                        </div>
+
+                        <div class="form-card">
+                            <h2>🚶 Enqueue Normal Patient</h2>
+                            <form id="normal-queue-form">
+                                <div class="form-group">
+                                    <label for="norm-patient-id">Patient ID</label>
+                                    <input type="number" id="norm-patient-id" required>
+                                </div>
+                                <button type="submit" class="submit-btn blue-btn">Add to Normal Queue (FIFO Queue Enqueue)</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Queue Visual Boards -->
+                    <div class="queue-boards-wrapper">
+                        <div class="board-card red-border">
+                            <h2>🚨 Emergency Patient Waiting Board</h2>
+                            <p class="board-desc">Sorted by Severity, then Arrival counter (FIFO tie-breaker).</p>
+                            <div class="queue-list" id="emergency-queue-list">
+                                <p class="empty-msg">No emergency patients waiting.</p>
+                            </div>
+                        </div>
+
+                        <div class="board-card blue-border">
+                            <h2>🚶 Normal Patient Waiting Board</h2>
+                            <p class="board-desc">Sorted purely by arrival order (FIFO).</p>
+                            <div class="queue-list" id="normal-queue-list">
+                                <p class="empty-msg">No normal patients waiting.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: DSA Visualizer -->
+            <div class="tab-panel" id="tab-visualizer">
+                <div class="visualizer-intro">
+                    <p>Observe the underlying live data structure layers acting behind the user interface operations. Visualizations update dynamically as you add, remove, queue, or cancel records.</p>
+                </div>
+
+                <div class="dsa-grid">
+                    <!-- HashMap visualization -->
+                    <div class="dsa-card span-col-2">
+                        <div class="dsa-card-header">
+                            <h3>🗺️ HashMap Structure (Patient Registry)</h3>
+                            <span class="dsa-complexity">Avg: O(1) Search/Insert</span>
+                        </div>
+                        <div class="dsa-canvas" id="dsa-hashmap-canvas">
+                            <!-- HashMap nodes -->
+                        </div>
+                    </div>
+
+                    <!-- Stack visualization -->
+                    <div class="dsa-card">
+                        <div class="dsa-card-header">
+                            <h3>🥞 LIFO Stack Structure (Cancelled Appointments)</h3>
+                            <span class="dsa-complexity">O(1) Push/Pop</span>
+                        </div>
+                        <div class="dsa-canvas" id="dsa-stack-canvas">
+                            <!-- Stack items -->
+                        </div>
+                    </div>
+
+                    <!-- Priority Queue Visualizer -->
+                    <div class="dsa-card span-col-2">
+                        <div class="dsa-card-header">
+                            <h3>🚨 Priority Queue (Emergency Min-Heap Visualizer)</h3>
+                            <span class="dsa-complexity">O(log n) Insert/Delete</span>
+                        </div>
+                        <div class="dsa-canvas" id="dsa-pqueue-canvas">
+                            <!-- Heap representation -->
+                        </div>
+                    </div>
+
+                    <!-- FIFO Queue Visualizer -->
+                    <div class="dsa-card span-col-2">
+                        <div class="dsa-card-header">
+                            <h3>🚶 Normal Queue (FIFO Linked List Pipeline)</h3>
+                            <span class="dsa-complexity">O(1) Enqueue/Dequeue</span>
+                        </div>
+                        <div class="dsa-canvas" id="dsa-fqueue-canvas">
+                            <!-- Queue pipeline -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Patient History Display -->
+    <div class="modal-overlay hidden" id="history-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="modal-patient-name">Patient Visit History (Linked List)</h2>
+                <button class="close-modal-btn" id="close-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="complexity-info-box">Stored as a chronological <strong>LinkedList&lt;VisitRecord&gt;</strong> per Patient entity.</p>
+                <div class="history-timeline" id="history-timeline">
+                    <!-- Visit list items -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
